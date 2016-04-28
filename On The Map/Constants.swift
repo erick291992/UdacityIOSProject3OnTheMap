@@ -11,6 +11,10 @@ import UIKit
 
 struct Constants {
     
+    enum APIValues:Int {
+        case Udacity, Parse
+    }
+    
     // MARK: Udacity
     struct Udacity {
         static let ApiScheme = "https"
@@ -18,6 +22,7 @@ struct Constants {
         static let ApiHost = "www.udacity.com"
         static let ApiPath = "/api"
         static let SignUp = "https://www.udacity.com/account/auth#!/signup"
+        static let ApiKey = "4e8bdccc3bb63cefbec21f936eca5651"
     }
     // MARK: Udacity Parameter Keys
     struct UdacityParameterKeys {
@@ -45,6 +50,11 @@ struct Constants {
     struct Segue {
         static let MapViewController = "MapViewController"
         static let TabBarController = "TabBarController"
+    }
+    struct Parse {
+        static let ApiScheme = "https"
+        static let ApiHost = "api.parse.com"
+        static let ApiPath = "/1"
     }
     struct ParseParameterValues {
         static let ApplicationId = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"

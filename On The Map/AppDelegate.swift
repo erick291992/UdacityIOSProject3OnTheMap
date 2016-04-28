@@ -16,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var sharedSession = NSURLSession.sharedSession()
     var sessionID: String? = nil
     var accountKey: Int? = nil
+    
+    var students = [Student]()
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.

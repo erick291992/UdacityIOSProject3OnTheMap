@@ -12,50 +12,11 @@ class NetworkClient{
     
     var accountKey:String?
     var sessionId:String?
-        
-    func taskForPOSTMethod(method: String, parameters: [String:AnyObject]?, jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
-        
-        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method))
-        request.HTTPMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.HTTPBody = jsonBody.dataUsingEncoding(NSUTF8StringEncoding)
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            
-            func sendError(error: String) {
-                let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForPOST(result: nil, error: NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
-            }
-            
-            guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
-                return
-            }
-            
-            /* GUARD: Was there any data returned? */
-            guard let data = data else {
-                sendError("No data was returned by the request!")
-                return
-            }
-            
-            /* GUARD: Did we get a successful 2XX response? */
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
-                print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
-                return
-            }
-            
-            let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5)) /* subset response data! */
-            self.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPOST)
-        }
-        task.resume()
-        return task
-    }
+    var students = [Student]()
     
-    func taskForParsePOSTMethod(method: String, parameters: [String:AnyObject]?,resquestValues:[String:String]? , jsonBody: String, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    func taskForPOSTMethod(method: String, parameters: [String:AnyObject]?,resquestValues:[String:String]? , jsonBody: String, API:Constants.APIValues, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
-        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method, API: API))
         request.HTTPMethod = "POST"
         if let resquestValues = resquestValues{
             for (key, value) in resquestValues {
@@ -98,10 +59,10 @@ class NetworkClient{
         return task
     }
     
-    func taskForDELETEMethod(method: String, parameters: [String:AnyObject]?, completionHandlerForDELETE: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    func taskForDELETEMethod(method: String, parameters: [String:AnyObject]?,API: Constants.APIValues, completionHandlerForDELETE: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
         
-        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method, API: API))
         request.HTTPMethod = "DELETE"
         var xsrfCookie: NSHTTPCookie? = nil
         let sharedCookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
@@ -139,9 +100,16 @@ class NetworkClient{
     
     // MARK: GET
     
-    func taskForGETMethod(method: String, var parameters: [String:AnyObject], completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
+    func taskForGETMethod(method: String, var parameters: [String:AnyObject]?,resquestValues:[String:String]?, API:Constants.APIValues, completionHandlerForGET: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
-        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method))
+        let request = NSMutableURLRequest(URL: URLFromParameters(parameters, withPathExtension: method, API: API))
+        if let resquestValues = resquestValues{
+            for (key, value) in resquestValues {
+                print("value:\(value)")
+                print("key:\(key)")
+                request.addValue(value, forHTTPHeaderField: key)
+            }
+        }
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
@@ -154,16 +122,17 @@ class NetworkClient{
                 sendError("There was an error with your request: \(error)")
                 return
             }
-            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else{
-                sendError("Your request returned a status code other than 2xx!")
-                return
-            }
             guard let data = data else{
                 sendError("No data was returned by the request!")
                 return
             }
-            let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
-            self.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForGET)
+            guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else{
+                sendError("Your request returned a status code other than 2xx!")
+                print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
+                return
+            }
+            //let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
         }
         task.resume()
         return task
@@ -196,12 +165,25 @@ class NetworkClient{
     }
     
     // create a URL from parameters
-    func URLFromParameters(parameters: [String:AnyObject]?, withPathExtension: String? = nil) -> NSURL {
+    func URLFromParameters(parameters: [String:AnyObject]?, withPathExtension: String? = nil, API:Constants.APIValues) -> NSURL {
         
         let components = NSURLComponents()
-        components.scheme = Constants.Udacity.ApiScheme
-        components.host = Constants.Udacity.ApiHost
-        components.path = Constants.Udacity.ApiPath + (withPathExtension ?? "")
+        if API == Constants.APIValues.Udacity{
+            components.scheme = Constants.Udacity.ApiScheme
+            components.host = Constants.Udacity.ApiHost
+            components.path = Constants.Udacity.ApiPath + (withPathExtension ?? "")
+        }
+        switch API {
+        case .Parse:
+            components.scheme = Constants.Parse.ApiScheme
+            components.host = Constants.Parse.ApiHost
+            components.path = Constants.Parse.ApiPath + (withPathExtension ?? "")
+        case .Udacity:
+            components.scheme = Constants.Udacity.ApiScheme
+            components.host = Constants.Udacity.ApiHost
+            components.path = Constants.Udacity.ApiPath + (withPathExtension ?? "")
+
+        }
         components.queryItems = [NSURLQueryItem]()
         
         

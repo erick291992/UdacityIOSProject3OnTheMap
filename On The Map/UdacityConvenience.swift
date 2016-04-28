@@ -12,7 +12,7 @@ extension NetworkClient{
     
     func loginWithUserInfo(username:String, password:String, completionHandlerForLogin:(success:Bool, error: NSError?)->Void){
         let body = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
-        taskForPOSTMethod("/session", parameters: nil, jsonBody: body) { (result, error) in
+        taskForPOSTMethod("/session", parameters: nil, resquestValues: nil, jsonBody: body, API: Constants.APIValues.Udacity) { (result, error) in
             if let error = error {
                 completionHandlerForLogin(success: false, error: error)
             } else {
@@ -43,7 +43,7 @@ extension NetworkClient{
     }
     
     func logoutUser(completionHandlerForLogout: (success:Bool, error: NSError?)->Void){
-        taskForDELETEMethod("/session", parameters: nil) { (result, error) in
+        taskForDELETEMethod("/session", parameters: nil, API: Constants.APIValues.Udacity) { (result, error) in
             print(result)
             if let error = error {
                 completionHandlerForLogout(success: false, error: error)
