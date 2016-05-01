@@ -11,6 +11,7 @@ import MapKit
 
 class PostInfoViewController: UIViewController, MKMapViewDelegate {
 
+    // MARK: Outlets
     @IBOutlet weak var linkTextView: UITextView!
     @IBOutlet weak var topView: UIView!
     @IBOutlet weak var bottomView: UIView!
@@ -39,6 +40,7 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    // MARK: Actions
     @IBAction func submitPressed(sender: AnyObject) {
         print(searchText.text)
         print(linkTextView.text)

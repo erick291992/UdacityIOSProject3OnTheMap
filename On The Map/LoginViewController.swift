@@ -11,17 +11,15 @@ import UIKit
 class LoginViewController: UIViewController {
 
     
-    var appDelegate: AppDelegate!
-    var keyboardOnScreen = false
     // MARK: Outlets
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
     
+    var keyboardOnScreen = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        
         configureUI()
         
         subscribeToNotification(UIKeyboardWillShowNotification, selector: Constants.Selectors.KeyboardWillShow)

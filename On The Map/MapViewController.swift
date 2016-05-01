@@ -47,7 +47,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         getStudents()
     }
     
-    // MARK: - Map view delegate
+    // MARK: - Map View delegate
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         let reuseId = "pin"
         
