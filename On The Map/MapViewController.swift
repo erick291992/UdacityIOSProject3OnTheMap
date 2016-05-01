@@ -34,21 +34,20 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 })
             }
             else{
-                print("failed to logout user \(error)")
+                performUIUpdatesOnMain({
+                    let alert = self.basicAlert("Warning", message: "failed to logout user", action: "OK")
+                    self.presentViewController(alert, animated: true, completion: nil)
+                })
             }
         }
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func refreshPressed(sender: AnyObject) {
+        NetworkClient.sharedInstance().students.removeAll()
+        getStudents()
     }
-    */
     
+    // MARK: - Map view delegate
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         let reuseId = "pin"
         
@@ -75,6 +74,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
     
+    // MARK: - Methods
     func getStudents(){
         if NetworkClient.sharedInstance().students.isEmpty{
             NetworkClient.sharedInstance().getStudentLocations { (success, students, error) in
@@ -84,42 +84,37 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                         NetworkClient.sharedInstance().students = students
                         
                         var annotations = [MKPointAnnotation]()
-                        
-                        // The "locations" array is loaded with the sample data below. We are using the dictionaries
-                        // to create map annotations. This would be more stylish if the dictionaries were being
-                        // used to create custom structs. Perhaps StudentLocation structs.
-                        
                         for student in NetworkClient.sharedInstance().students {
-                            
-                            // Notice that the float values are being used to create CLLocationDegree values.
-                            // This is a version of the Double type.
-                            let lat = CLLocationDegrees(student.latitude)
-                            let long = CLLocationDegrees(student.longitude)
-                            
-                            // The lat and long are used to create a CLLocationCoordinates2D instance.
+                            let lat = CLLocationDegrees(student.latitude!)
+                            let long = CLLocationDegrees(student.longitude!)
                             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
                             
-                            let first = student.firstName
-                            let last = student.lastName
-                            let mediaURL = student.mediaURL
-                            
-                            // Here we create the annotation and set its coordiate, title, and subtitle properties
+                            let first = student.firstName!
+                            let last = student.lastName!
+                            let mediaURL = student.mediaURL!
                             let annotation = MKPointAnnotation()
                             annotation.coordinate = coordinate
                             annotation.title = "\(first) \(last)"
                             annotation.subtitle = mediaURL
-                            
-                            // Finally we place the annotation in an array of annotations.
                             annotations.append(annotation)
                         }
-                        // When the array is complete, we add the annotations to the map.
                         self.mapView.addAnnotations(annotations)
                     }
                 }
                 else{
-                    print("getStudentLocations did not work")
+                    performUIUpdatesOnMain({
+                        let alert = self.basicAlert("Warning", message: "Locations not found", action: "OK")
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    })
                 }
             }
         }
+    }
+    
+    private func basicAlert(tittle:String, message:String, action: String)-> UIAlertController{
+        let alert = UIAlertController(title: tittle, message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: action, style: .Default, handler: nil)
+        alert.addAction(action)
+        return alert
     }
 }

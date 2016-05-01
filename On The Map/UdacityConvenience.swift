@@ -18,15 +18,12 @@ extension NetworkClient{
             } else {
                 if let session = result[Constants.UdacityParameterKeys.Session] as? NSDictionary {
                     if let id = session[Constants.UdacityParameterKeys.Id] as? String {
-                        print("ID: \(id)")
                         self.sessionId = id
                     }
                 }
                 if let account = result[Constants.UdacityParameterKeys.Account] as? NSDictionary {
-                    print(account)
                     if let registered = account[Constants.UdacityParameterKeys.Registered] as? Bool where registered == true {
                         if let key = account[Constants.UdacityParameterKeys.Key] as? String{
-                            print("key: \(key)")
                             self.accountKey = key
                             completionHandlerForLogin(success: true, error: error)
                         }
@@ -51,13 +48,6 @@ extension NetworkClient{
             else{
                 if let session = result[Constants.UdacityParameterKeys.Session] as? NSDictionary {
                     if let id = session[Constants.UdacityParameterKeys.Id] as? String {
-//                        print("ID: \(id)")
-//                        if id == self.sessionId{
-//                            completionHandlerForLogout(success: true, error: error)
-//                        }
-//                        else{
-//                            completionHandlerForLogout(success: f, error: NSError?)
-//                        }
                         completionHandlerForLogout(success: true, error: error)
                     }
                     else{
@@ -73,7 +63,20 @@ extension NetworkClient{
     
     //4370518683
     
-    func getUsersPublicData(key:Int, completionHandlerForUserData:(success:Bool, error:NSError?)->Void){
-        
+    func getUsersPublicData(key:String, completionHandlerForUserData:(success:Bool, error:NSError?)->Void){
+        taskForGETMethod("/users/\(key)", parameters: nil, resquestValues: nil, API: Constants.APIValues.Udacity) { (result, error) in
+            if let error = error {
+                completionHandlerForUserData(success: false, error: error)
+            }
+            else{
+                if let user = result["user"] as? NSDictionary{
+                    NetworkClient.sharedInstance().user = Student(user: user)
+                    completionHandlerForUserData(success: true, error: error)
+                }
+                else{
+                    completionHandlerForUserData(success: false, error: NSError(domain: "getUsersPublicData", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not get user info"]))
+                }
+            }
+        }
     }
 }

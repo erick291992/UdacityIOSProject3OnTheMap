@@ -11,16 +11,27 @@ import MapKit
 
 class PostInfoViewController: UIViewController, MKMapViewDelegate {
 
-    
+    @IBOutlet weak var linkTextView: UITextView!
     @IBOutlet weak var topView: UIView!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var searchText: UITextView!
+    @IBOutlet weak var findButton: UIButton!
+    @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
     
+    
+    var annotation: MKPointAnnotation!
+    var user: Student?
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        searchText.delegate = self
+        linkTextView.delegate = self
+        user = NetworkClient.sharedInstance().user
+    }
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.setup()
     }
 
     override func didReceiveMemoryWarning() {
@@ -29,9 +40,104 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func submitPressed(sender: AnyObject) {
-        bottomView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.3)
-        searchText.hidden = true
+        print(searchText.text)
+        print(linkTextView.text)
+        user?.mediaURL = linkTextView.text
+        NetworkClient.sharedInstance().user = user
+        
+        NetworkClient.sharedInstance().postLocation(user!) { (success, error) in
+            if error != nil{
+                print(error)
+            }
+            if success{
+                print("posted data")
+                self.dismissCurrentVC()
+            }
+        }
+        
+    }
+    
+    @IBAction func findPressed(sender: AnyObject) {
+        let localSearchRequest = MKLocalSearchRequest()
+        localSearchRequest.naturalLanguageQuery = searchText.text
+        let locationSearch = MKLocalSearch(request: localSearchRequest)
+        locationSearch.startWithCompletionHandler { (response, error) in
+            guard error == nil else{
+                performUIUpdatesOnMain({
+                    let alert = self.basicAlert("Warning", message: "Place not found", action: "OK")
+                    self.presentViewController(alert, animated: true, completion: nil)
+                })
+                return
+            }
+            guard let response = response else{
+                performUIUpdatesOnMain({
+                    let alert = self.basicAlert("Warning", message: "Place not found", action: "OK")
+                    self.presentViewController(alert, animated: true, completion: nil)
+                })
+                return
+            }
+            performUIUpdatesOnMain({ 
+                self.bottomView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.3)
+                self.topView.hidden = true
+                self.searchText.hidden = true
+            })
+            let lat = response.boundingRegion.center.latitude
+            let long = response.boundingRegion.center.longitude
+            
+            self.user?.latitude = lat
+            self.user?.longitude = long
+            self.user?.mapString = self.searchText.text
+            
+            NetworkClient.sharedInstance().user = self.user
+            
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            self.annotation = MKPointAnnotation()
+            self.annotation.coordinate = coordinate
+            self.mapView.centerCoordinate = self.annotation.coordinate
+            self.mapView.addAnnotation(self.annotation)
+            self.mapView.region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpanMake(0.01, 0.01))
+            performUIUpdatesOnMain({
+                self.cancelButton.backgroundColor = Constants.UI.BlueColor
+                self.cancelButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+                self.findButton.hidden = true
+                self.submitButton.hidden = false
+            })
+            
+        }
+        
+    }
+    
+    @IBAction func cancelPressed(sender: AnyObject) {
+        dismissCurrentVC()
+    }
+    
+    // MARK: - Methods
+    func setup(){
+        submitButton.hidden = true
+    }
+    
+    private func basicAlert(tittle:String, message:String, action: String)-> UIAlertController{
+        let alert = UIAlertController(title: tittle, message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: action, style: .Default, handler: nil)
+        alert.addAction(action)
+        return alert
+    }
+    
+    func dismissCurrentVC(){
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
 
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        view.endEditing(true)
+    }
 
+}
+
+// MARK: - PostInfoViewController: UITexViewDelegate
+extension PostInfoViewController: UITextViewDelegate{
+    func textViewDidBeginEditing(textView: UITextView) {
+        if textView == searchText || textView == linkTextView{
+            textView.text = ""
+        }
+    }
 }

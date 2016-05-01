@@ -17,7 +17,6 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var usernameTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var debugTextLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,19 +40,42 @@ class LoginViewController: UIViewController {
         super.viewWillAppear(animated)
         setUIEnabled(true)
     }
-    // MARK: Login
+    
+    // MARK: Actions
+    
+    @IBAction func signUp(sender: AnyObject) {
+        let app = UIApplication.sharedApplication()
+        app.openURL(NSURL(string: Constants.Udacity.SignUpLink)!)
+    }
     
     @IBAction func loginPressed(sender: AnyObject) {
         if usernameTextField.text!.isEmpty || passwordTextField.text!.isEmpty {
-            debugTextLabel.text = "Username or Password is Empty."
+            let alert = self.basicAlert("Login Failed", message: "Username or Password is Empty.", action: "OK")
+            self.presentViewController(alert, animated: true, completion: nil)
         } else {
             setUIEnabled(false)
-//            log()
             NetworkClient.sharedInstance().loginWithUserInfo(usernameTextField.text!, password: passwordTextField.text!) { (success, error) in
-                if success{
-                    print("login successfull")
+                if error != nil{
                     performUIUpdatesOnMain({ 
-                        self.completeLogin()
+                        let alert = self.basicAlert("Login Failed", message: "connection error", action: "OK")
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    })
+                }
+                if success{
+                    NetworkClient.sharedInstance().getUsersPublicData(NetworkClient.sharedInstance().accountKey!, completionHandlerForUserData: { (success, error) in
+                        if success{
+                            performUIUpdatesOnMain({
+                                self.completeLogin()
+                            })
+                        }
+                        else{
+                            print(error)
+                            performUIUpdatesOnMain({
+                                let alert = self.basicAlert("Login Failed", message: "Could not get user info", action: "OK")
+                                self.setUIEnabled(true)
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            })
+                        }
                     })
                 }
                 else{
@@ -68,30 +90,7 @@ class LoginViewController: UIViewController {
         }
     }
     
-    func log(){
-        let body = "{\"udacity\": {\"username\": \"\(usernameTextField.text!)\", \"password\": \"\(passwordTextField.text!)\"}}"
-        print(body)
-        
-        let request = NSMutableURLRequest(URL: NSURL(string: "https://www.udacity.com/api/session")!)
-        request.HTTPMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.HTTPBody = body.dataUsingEncoding(NSUTF8StringEncoding)
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithRequest(request) { data, response, error in
-            if error != nil { // Handle error…
-                return
-            }
-            guard let data = data else{
-                return
-            }
-            let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5)) /* subset response data! */
-            print(NSString(data: newData, encoding: NSUTF8StringEncoding))
-        }
-        task.resume()
-    }
     private func completeLogin() {
-        debugTextLabel.text = ""
         let controller = storyboard!.instantiateViewControllerWithIdentifier(Constants.Segue.TabBarController) as! UITabBarController
         presentViewController(controller, animated: true, completion: nil)
     }
@@ -101,11 +100,6 @@ class LoginViewController: UIViewController {
         alert.addAction(action)
         return alert
     }
-    
-    //7890275126
-    //7890275126
-    //7883296663
-    //7894344628
 }
 
 // MARK: - LoginViewController: UITextFieldDelegate
@@ -117,12 +111,6 @@ extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-    
-    func textFieldDidBeginEditing(textField: UITextField) {
-        if ((textField == usernameTextField) || (textField == passwordTextField)){
-            textField.text = ""
-        }
     }
     
     // MARK: Show/Hide Keyboard

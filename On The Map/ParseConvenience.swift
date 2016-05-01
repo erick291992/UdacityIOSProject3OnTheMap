@@ -34,4 +34,26 @@ extension NetworkClient{
             }
         }
     }
+    
+    func postLocation(student:Student, completionHandlerForPostLocation:(success:Bool, error: NSError?)->Void){
+        let requestValues = [Constants.ParseParameterKeys.ApplicationId: Constants.ParseParameterValues.ApplicationId,
+                             Constants.ParseParameterKeys.RestAPI: Constants.ParseParameterValues.RestAPI
+        ]
+
+        let body = "{\"uniqueKey\": \"\(student.uniqueKey!)\", \"firstName\": \"\(student.firstName!)\", \"lastName\": \"\(student.lastName!)\",\"mapString\": \"\(student.mapString!)\", \"mediaURL\": \"\(student.mediaURL!)\",\"latitude\": \(student.latitude!), \"longitude\": \(student.longitude!)}"
+        taskForPOSTMethod("/classes/StudentLocation", parameters: nil, resquestValues: requestValues, jsonBody: body, API: Constants.APIValues.Parse) { (result, error) in
+            if let error = error {
+                completionHandlerForPostLocation(success: false, error: error)
+            }
+            else{
+                if let results = result as? NSDictionary{
+                    print(results)
+                    completionHandlerForPostLocation(success: true, error: error)
+                }
+                else{
+                    completionHandlerForPostLocation(success: false, error: NSError(domain: "postLocation", code: 0, userInfo: [NSLocalizedDescriptionKey: "No Results Found"]))
+                }
+            }
+        }
+    }
 }

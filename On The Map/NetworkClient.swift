@@ -13,6 +13,7 @@ class NetworkClient{
     var accountKey:String?
     var sessionId:String?
     var students = [Student]()
+    var user:Student?
     
     func taskForPOSTMethod(method: String, parameters: [String:AnyObject]?,resquestValues:[String:String]? , jsonBody: String, API:Constants.APIValues, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
         
@@ -52,8 +53,14 @@ class NetworkClient{
                 return
             }
             
-            let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5)) /* subset response data! */
-            self.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPOST)
+            switch API {
+            case .Parse:
+                self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
+            case .Udacity:
+                let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
+                self.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForPOST)
+            }
+            
         }
         task.resume()
         return task
@@ -131,8 +138,15 @@ class NetworkClient{
                 print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
                 return
             }
-            //let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
+            
+            switch API {
+            case .Parse:
+                self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForGET)
+            case .Udacity:
+                let newData = data.subdataWithRange(NSMakeRange(5, data.length - 5))
+                self.convertDataWithCompletionHandler(newData, completionHandlerForConvertData: completionHandlerForGET)
+            }
+            
         }
         task.resume()
         return task
@@ -168,11 +182,6 @@ class NetworkClient{
     func URLFromParameters(parameters: [String:AnyObject]?, withPathExtension: String? = nil, API:Constants.APIValues) -> NSURL {
         
         let components = NSURLComponents()
-        if API == Constants.APIValues.Udacity{
-            components.scheme = Constants.Udacity.ApiScheme
-            components.host = Constants.Udacity.ApiHost
-            components.path = Constants.Udacity.ApiPath + (withPathExtension ?? "")
-        }
         switch API {
         case .Parse:
             components.scheme = Constants.Parse.ApiScheme

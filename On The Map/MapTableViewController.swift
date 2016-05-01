@@ -17,9 +17,6 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
 
         tableView.delegate = self
         tableView.dataSource = self
-        // Do any additional setup after loading the view.
-        
-        print("Number Of Students \(NetworkClient.sharedInstance().students.count)")
         getStudents()
     }
 
@@ -30,7 +27,6 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         tableView.reloadData()
-        
     }
 
     
@@ -48,16 +44,12 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
     
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @IBAction func refreshPressed(sender: AnyObject) {
+        NetworkClient.sharedInstance().students.removeAll()
+        getStudents()
     }
-    */
+
+    
     
     // MARK: - Table view data source
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -72,7 +64,7 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCellWithIdentifier("MapTableViewCell") as? MapTableViewCell {
             let student = NetworkClient.sharedInstance().students[indexPath.row]
-            cell.configureCell(student.firstName, studentLastName: student.lastName, studentLink: student.mediaURL)
+            cell.configureCell(student.firstName!, studentLastName: student.lastName!, studentLink: student.mediaURL!)
             return cell
         }
         else{
@@ -83,22 +75,33 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         openUserLink(NetworkClient.sharedInstance().students[indexPath.row])
     }
-    
+    // MARK: - Methods
     func getStudents(){
         if NetworkClient.sharedInstance().students.isEmpty{
             NetworkClient.sharedInstance().getStudentLocations { (success, students, error) in
                 if success{
-                    print("getStudentLocations worked")
-
+                    if let students = students{
+                        NetworkClient.sharedInstance().students = students
+                    }
                 }
                 else{
-                    print("getStudentLocations did not work")
+                    performUIUpdatesOnMain({ 
+                        let alert = self.basicAlert("Warning", message: "Locations not found", action: "OK")
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    })
                 }
             }
         }
     }
     func openUserLink(student:Student){
         let app = UIApplication.sharedApplication()
-        app.openURL(NSURL(string: student.mediaURL)!)
+        app.openURL(NSURL(string: student.mediaURL!)!)
+    }
+    
+    private func basicAlert(tittle:String, message:String, action: String)-> UIAlertController{
+        let alert = UIAlertController(title: tittle, message: message, preferredStyle: .Alert)
+        let action = UIAlertAction(title: action, style: .Default, handler: nil)
+        alert.addAction(action)
+        return alert
     }
 }

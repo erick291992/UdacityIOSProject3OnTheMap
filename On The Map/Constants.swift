@@ -23,6 +23,7 @@ struct Constants {
         static let ApiPath = "/api"
         static let SignUp = "https://www.udacity.com/account/auth#!/signup"
         static let ApiKey = "4e8bdccc3bb63cefbec21f936eca5651"
+        static let SignUpLink = "https://www.udacity.com/account/auth#!/signup"
     }
     // MARK: Udacity Parameter Keys
     struct UdacityParameterKeys {
@@ -73,6 +74,8 @@ struct Constants {
         static let OrangeLightColor = UIColor(red: 247.0/255.0, green:201.0/255.0, blue:155.0/255.0, alpha: 1.0)
         static let BlackColor = UIColor(red: 255.0/255.0, green:255.0/255.0, blue:255.0/255.0, alpha: 1.0)
         static let OrangeColor = UIColor(red: 255.0/255.0, green: 135.0/255.0, blue: 41.0/255, alpha: 1.0)
+        static let BlueColor = UIColor(red: 92.0/255.0, green: 135.0/255.0, blue: 175.0/255.0, alpha: 1.0)
+        static let greyColor = UIColor(red: 224.0/255.0, green: 224.0/255.0, blue: 224.0/255.0, alpha: 1.0)
     }
     
     // MARK: Selectors
