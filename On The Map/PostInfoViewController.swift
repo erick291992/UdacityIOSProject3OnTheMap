@@ -79,7 +79,7 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
                 return
             }
             performUIUpdatesOnMain({ 
-                self.bottomView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.3)
+                self.bottomView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.4)
                 self.topView.hidden = true
                 self.searchText.hidden = true
             })
