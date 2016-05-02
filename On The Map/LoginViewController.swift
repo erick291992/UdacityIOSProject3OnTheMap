@@ -181,6 +181,8 @@ extension LoginViewController {
         textField.tintColor = Constants.UI.OrangeColor
         textField.delegate = self
     }
+    //allow for touching ouside of textfield to dissmiss
+    //http://stackoverflow.com/questions/5306240/iphone-dismiss-keyboard-when-touching-outside-of-uitextfield
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         view.endEditing(true)
     }
