@@ -17,7 +17,6 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
 
         tableView.delegate = self
         tableView.dataSource = self
-        getStudents()
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,7 +25,8 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        tableView.reloadData()
+        print("view will appear")
+        getStudents()
     }
 
     
@@ -45,7 +45,7 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @IBAction func refreshPressed(sender: AnyObject) {
-        NetworkClient.sharedInstance().students.removeAll()
+        StudentsArray.students.removeAll()
         getStudents()
     }
 
@@ -58,12 +58,13 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return NetworkClient.sharedInstance().students.count
+        return StudentsArray.students.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCellWithIdentifier("MapTableViewCell") as? MapTableViewCell {
-            let student = NetworkClient.sharedInstance().students[indexPath.row]
+            let student = StudentsArray.students[indexPath.row]
+            //let student = NetworkClient.sharedInstance().students[indexPath.row]
             cell.configureCell(student.firstName!, studentLastName: student.lastName!, studentLink: student.mediaURL!)
             return cell
         }
@@ -73,15 +74,18 @@ class MapTableViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     // MARK: - Table view delegate
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        openUserLink(NetworkClient.sharedInstance().students[indexPath.row])
+        openUserLink(StudentsArray.students[indexPath.row])
     }
     // MARK: - Methods
     func getStudents(){
-        if NetworkClient.sharedInstance().students.isEmpty{
+        if StudentsArray.students.isEmpty{
             NetworkClient.sharedInstance().getStudentLocations { (success, students, error) in
                 if success{
                     if let students = students{
-                        NetworkClient.sharedInstance().students = students
+                        StudentsArray.students = students
+                        performUIUpdatesOnMain({ 
+                            self.tableView.reloadData()
+                        })
                     }
                 }
                 else{

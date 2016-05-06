@@ -19,14 +19,23 @@ extension NetworkClient{
                 completionHandlerForLocations(success: false, students:nil, error: error)
             }
             else{
-                var students = [Student]()
+//                var students = [Student]()
+//                if let results = result["results"] as? NSArray{
+//                    for value in results{
+//                        let data = value as! NSDictionary
+//                        let student = Student(data: data)
+//                        students.append(student)
+//                    }
+//                    completionHandlerForLocations(success: true, students: students, error: error)
+//                }
+                
                 if let results = result["results"] as? NSArray{
-                    for value in results{
-                        let data = value as! NSDictionary
-                        let student = Student(data: data)
-                        students.append(student)
-                    }
-                    completionHandlerForLocations(success: true, students: students, error: error)
+                    //let students = Student.studentFromResult(results)
+                    
+                    StudentsArray.studentFromResult(results)
+                    
+                    //completionHandlerForLocations(success: true, students: students, error: error)
+                    completionHandlerForLocations(success: true, students: StudentsArray.students, error: error)
                 }
                 else{
                     completionHandlerForLocations(success: false, students: nil, error: NSError(domain: "getStudentLocations", code: 0, userInfo: [NSLocalizedDescriptionKey: "No Results Found"]))

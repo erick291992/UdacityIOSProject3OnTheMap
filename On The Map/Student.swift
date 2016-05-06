@@ -37,11 +37,14 @@ struct Student {
         self.lastName = user["last_name"] as? String
         self.uniqueKey = user["key"] as? String
     }
-    static func studentFromResult(results: [[String: AnyObject]]) -> [Student]{
+    static func studentFromResult(results: NSArray) -> [Student]{
         var students = [Student]()
-        
-        for result in results {
-            students.append(Student(data: result))
+        print(students)
+
+        for value in results{
+            let data = value as! NSDictionary
+            let student = Student(data: data)
+            students.append(student)
         }
         
         return students

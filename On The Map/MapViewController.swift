@@ -41,7 +41,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func refreshPressed(sender: AnyObject) {
-        NetworkClient.sharedInstance().students.removeAll()
+        StudentsArray.students.removeAll()
         getStudents()
     }
     
@@ -74,15 +74,15 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // MARK: - Methods
     func getStudents(){
-        if NetworkClient.sharedInstance().students.isEmpty{
+        if StudentsArray.students.isEmpty{
             NetworkClient.sharedInstance().getStudentLocations { (success, students, error) in
                 if success{
                     print("getStudentLocations worked")
                     if let students = students{
-                        NetworkClient.sharedInstance().students = students
+                        StudentsArray.students = students
                         
                         var annotations = [MKPointAnnotation]()
-                        for student in NetworkClient.sharedInstance().students {
+                        for student in StudentsArray.students {
                             let lat = CLLocationDegrees(student.latitude!)
                             let long = CLLocationDegrees(student.longitude!)
                             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)

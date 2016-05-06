@@ -19,6 +19,7 @@
 		CD6E4A9C1CC3682900FFA988 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CD6E4A9B1CC3682900FFA988 /* Assets.xcassets */; };
 		CD6E4A9F1CC3682900FFA988 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD6E4A9D1CC3682900FFA988 /* LaunchScreen.storyboard */; };
 		CD6E4AA71CC37B2C00FFA988 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6E4AA61CC37B2C00FFA988 /* Constants.swift */; };
+		CDEBBF251CDD36FF00A3EDCE /* StudentsArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDEBBF241CDD36FF00A3EDCE /* StudentsArray.swift */; };
 		CDF480171CC4F81400895CB4 /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF480161CC4F81400895CB4 /* NetworkClient.swift */; };
 		CDF480191CC5004500895CB4 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF480181CC5004500895CB4 /* GCDBlackBox.swift */; };
 		CDF4801B1CC5012400895CB4 /* UdacityConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF4801A1CC5012400895CB4 /* UdacityConvenience.swift */; };
@@ -40,6 +41,7 @@
 		CD6E4A9E1CC3682900FFA988 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CD6E4AA01CC3682900FFA988 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CD6E4AA61CC37B2C00FFA988 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CDEBBF241CDD36FF00A3EDCE /* StudentsArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentsArray.swift; sourceTree = "<group>"; };
 		CDF480161CC4F81400895CB4 /* NetworkClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
 		CDF480181CC5004500895CB4 /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		CDF4801A1CC5012400895CB4 /* UdacityConvenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConvenience.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				CDF4801D1CC5020D00895CB4 /* Client */,
 				CD12CD011CCA8C8300FB7970 /* Student.swift */,
+				CDEBBF241CDD36FF00A3EDCE /* StudentsArray.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 				CD12CCFE1CCA8BDC00FB7970 /* ParseConvenience.swift in Sources */,
 				CD6E4A951CC3682800FFA988 /* AppDelegate.swift in Sources */,
 				CD2115121CD535A200B605D4 /* CustomButton.swift in Sources */,
+				CDEBBF251CDD36FF00A3EDCE /* StudentsArray.swift in Sources */,
 				CD6E4AA71CC37B2C00FFA988 /* Constants.swift in Sources */,
 				CD12CD021CCA8C8300FB7970 /* Student.swift in Sources */,
 				CDF480171CC4F81400895CB4 /* NetworkClient.swift in Sources */,

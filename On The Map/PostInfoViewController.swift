@@ -20,6 +20,7 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
     @IBOutlet weak var findButton: UIButton!
     @IBOutlet weak var submitButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     
     var annotation: MKPointAnnotation!
@@ -56,6 +57,7 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
                 })
             }
             if success{
+                StudentsArray.students.removeAll()
                 self.dismissCurrentVC()
             }
         }
@@ -63,12 +65,16 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
     }
     
     @IBAction func findPressed(sender: AnyObject) {
+        activityIndicator.hidden = false
+        activityIndicator.startAnimating()
         let localSearchRequest = MKLocalSearchRequest()
         localSearchRequest.naturalLanguageQuery = searchText.text
         let locationSearch = MKLocalSearch(request: localSearchRequest)
         locationSearch.startWithCompletionHandler { (response, error) in
             guard error == nil else{
                 performUIUpdatesOnMain({
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.hidden = true
                     let alert = self.basicAlert("Warning", message: "Place not found", action: "OK")
                     self.presentViewController(alert, animated: true, completion: nil)
                 })
@@ -76,12 +82,14 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
             }
             guard let response = response else{
                 performUIUpdatesOnMain({
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.hidden = true
                     let alert = self.basicAlert("Warning", message: "Place not found", action: "OK")
                     self.presentViewController(alert, animated: true, completion: nil)
                 })
                 return
             }
-            performUIUpdatesOnMain({ 
+            performUIUpdatesOnMain({
                 self.bottomView.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.4)
                 self.topView.hidden = true
                 self.searchText.hidden = true
@@ -102,6 +110,8 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
             self.mapView.addAnnotation(self.annotation)
             self.mapView.region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpanMake(0.01, 0.01))
             performUIUpdatesOnMain({
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.hidden = true
                 self.cancelButton.backgroundColor = Constants.UI.BlueColor
                 self.cancelButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
                 self.findButton.hidden = true
@@ -109,7 +119,6 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
             })
             
         }
-        
     }
     
     @IBAction func cancelPressed(sender: AnyObject) {
@@ -119,6 +128,7 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
     // MARK: - Methods
     func setup(){
         submitButton.hidden = true
+        activityIndicator.hidden = true
     }
     
     private func basicAlert(tittle:String, message:String, action: String)-> UIAlertController{

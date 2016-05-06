@@ -12,7 +12,6 @@ class NetworkClient{
     
     var accountKey:String?
     var sessionId:String?
-    var students = [Student]()
     var user:Student?
     
     func taskForPOSTMethod(method: String, parameters: [String:AnyObject]?,resquestValues:[String:String]? , jsonBody: String, API:Constants.APIValues, completionHandlerForPOST: (result: AnyObject!, error: NSError?) -> Void) -> NSURLSessionDataTask {
@@ -50,6 +49,7 @@ class NetworkClient{
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
                 //sendError("Your request returned a status code other than 2xx!")
+                //below allow fo us to get the error message we need to diplay based on status code
                 let dataArray = NSString(data: data, encoding: NSUTF8StringEncoding)!.componentsSeparatedByString("\"")
                 print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
                 sendError(dataArray[dataArray.endIndex-2])

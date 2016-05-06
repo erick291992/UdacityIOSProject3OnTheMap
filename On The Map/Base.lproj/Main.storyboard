@@ -357,6 +357,9 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="KB2-eJ-I5n">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -383,10 +386,12 @@
                             <constraint firstItem="bHF-Dc-PmD" firstAttribute="top" secondItem="TO4-DK-pUg" secondAttribute="bottom" id="daF-94-xgt"/>
                             <constraint firstItem="BPi-Pj-YSN" firstAttribute="top" secondItem="ciT-gp-lRp" secondAttribute="bottom" id="jdH-tp-ilb"/>
                             <constraint firstAttribute="trailing" secondItem="TO4-DK-pUg" secondAttribute="trailing" id="k0j-Nt-nzf"/>
+                            <constraint firstItem="KB2-eJ-I5n" firstAttribute="centerY" secondItem="RWT-cV-gTv" secondAttribute="centerY" id="mHv-Kn-15p"/>
                             <constraint firstItem="fJV-P1-oRY" firstAttribute="top" secondItem="XaU-3u-Cd9" secondAttribute="bottom" id="mbn-3e-HWb"/>
                             <constraint firstItem="TO4-DK-pUg" firstAttribute="leading" secondItem="RWT-cV-gTv" secondAttribute="leading" id="oT5-Af-lYb"/>
                             <constraint firstItem="bHF-Dc-PmD" firstAttribute="leading" secondItem="RWT-cV-gTv" secondAttribute="leading" id="p73-aE-GXU"/>
                             <constraint firstItem="BPi-Pj-YSN" firstAttribute="leading" secondItem="RWT-cV-gTv" secondAttribute="leading" id="tET-Au-hP7"/>
+                            <constraint firstItem="KB2-eJ-I5n" firstAttribute="centerX" secondItem="RWT-cV-gTv" secondAttribute="centerX" id="w52-0O-hxn"/>
                             <constraint firstItem="BPi-Pj-YSN" firstAttribute="top" secondItem="bHF-Dc-PmD" secondAttribute="bottom" id="wCp-He-uEY"/>
                             <constraint firstAttribute="trailingMargin" secondItem="TO4-DK-pUg" secondAttribute="trailing" id="yff-pn-WqH"/>
                         </constraints>
@@ -404,6 +409,7 @@
                         </variation>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="KB2-eJ-I5n" id="6pr-Ik-kqJ"/>
                         <outlet property="bottomView" destination="XaU-3u-Cd9" id="vMI-GT-DAN"/>
                         <outlet property="cancelButton" destination="TO4-DK-pUg" id="ThL-gb-quf"/>
                         <outlet property="findButton" destination="dcv-1F-7ix" id="upY-mz-nix"/>
