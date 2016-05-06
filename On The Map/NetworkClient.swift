@@ -36,7 +36,8 @@ class NetworkClient{
             }
             
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error)")
+                print("There was an error with your request")
+                sendError(error!.localizedDescription)
                 return
             }
             
@@ -48,8 +49,10 @@ class NetworkClient{
             
             /* GUARD: Did we get a successful 2XX response? */
             guard let statusCode = (response as? NSHTTPURLResponse)?.statusCode where statusCode >= 200 && statusCode <= 299 else {
-                sendError("Your request returned a status code other than 2xx!")
+                //sendError("Your request returned a status code other than 2xx!")
+                let dataArray = NSString(data: data, encoding: NSUTF8StringEncoding)!.componentsSeparatedByString("\"")
                 print(NSString(data: data, encoding: NSUTF8StringEncoding)!)
+                sendError(dataArray[dataArray.endIndex-2])
                 return
             }
             

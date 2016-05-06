@@ -50,9 +50,12 @@ class PostInfoViewController: UIViewController, MKMapViewDelegate {
         NetworkClient.sharedInstance().postLocation(user!) { (success, error) in
             if error != nil{
                 print(error)
+                performUIUpdatesOnMain({
+                    let alert = self.basicAlert("Post Location Fail", message: error!.localizedDescription, action: "OK")
+                    self.presentViewController(alert, animated: true, completion: nil)
+                })
             }
             if success{
-                print("posted data")
                 self.dismissCurrentVC()
             }
         }

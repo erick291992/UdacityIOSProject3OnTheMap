@@ -20,17 +20,6 @@ struct Student {
     var uniqueKey:String?
     var updatedAt:String?
     
-//    
-//    "createdAt": "2015-02-25T01:10:38.103Z",
-//    "firstName": "Jarrod",
-//    "lastName": "Parkes",
-//    "latitude": 34.7303688,
-//    "longitude": -86.5861037,
-//    "mapString": "Huntsville, Alabama ",
-//    "mediaURL": "https://www.linkedin.com/in/jarrodparkes",
-//    "objectId": "JhOtcRkxsh",
-//    "uniqueKey": "996618664",
-//    "updatedAt": "2015-03-09T22:04:50.315Z"
     init(data: NSDictionary){
         self.createdAt = data["createdAt"] as? String
         self.firstName = data["firstName"] as? String
@@ -47,5 +36,14 @@ struct Student {
         self.firstName = user["first_name"] as? String
         self.lastName = user["last_name"] as? String
         self.uniqueKey = user["key"] as? String
+    }
+    static func studentFromResult(results: [[String: AnyObject]]) -> [Student]{
+        var students = [Student]()
+        
+        for result in results {
+            students.append(Student(data: result))
+        }
+        
+        return students
     }
 }

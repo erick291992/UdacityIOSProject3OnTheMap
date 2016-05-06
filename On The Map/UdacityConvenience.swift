@@ -14,7 +14,9 @@ extension NetworkClient{
         let body = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
         taskForPOSTMethod("/session", parameters: nil, resquestValues: nil, jsonBody: body, API: Constants.APIValues.Udacity) { (result, error) in
             if let error = error {
+                print("---")
                 completionHandlerForLogin(success: false, error: error)
+                print("---")
             } else {
                 if let session = result[Constants.UdacityParameterKeys.Session] as? NSDictionary {
                     if let id = session[Constants.UdacityParameterKeys.Id] as? String {
@@ -32,7 +34,6 @@ extension NetworkClient{
                         completionHandlerForLogin(success: false, error: NSError(domain: "loginWithUserInfo", code: 0, userInfo: [NSLocalizedDescriptionKey: "User Not Registered"]))
                     }
                 } else {
-                    print("could not get account")
                     completionHandlerForLogin(success: false, error: NSError(domain: "loginWithUserInfo", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not Log User In"]))
                 }
             }
@@ -60,8 +61,6 @@ extension NetworkClient{
             }
         }
     }
-    
-    //4370518683
     
     func getUsersPublicData(key:String, completionHandlerForUserData:(success:Bool, error:NSError?)->Void){
         taskForGETMethod("/users/\(key)", parameters: nil, resquestValues: nil, API: Constants.APIValues.Udacity) { (result, error) in

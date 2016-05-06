@@ -55,7 +55,8 @@ class LoginViewController: UIViewController {
             NetworkClient.sharedInstance().loginWithUserInfo(usernameTextField.text!, password: passwordTextField.text!) { (success, error) in
                 if error != nil{
                     performUIUpdatesOnMain({ 
-                        let alert = self.basicAlert("Login Failed", message: "Account not found or invalid credentials.", action: "OK")
+                        let alert = self.basicAlert("Login Failed", message: error!.localizedDescription, action: "OK")
+                        self.setUIEnabled(true)
                         self.presentViewController(alert, animated: true, completion: nil)
                     })
                 }
@@ -74,14 +75,6 @@ class LoginViewController: UIViewController {
                                 self.presentViewController(alert, animated: true, completion: nil)
                             })
                         }
-                    })
-                }
-                else{
-                    print(error)
-                    performUIUpdatesOnMain({ 
-                        let alert = self.basicAlert("Login Failed", message: "Invalid username/password", action: "OK")
-                        self.setUIEnabled(true)
-                        self.presentViewController(alert, animated: true, completion: nil)
                     })
                 }
             }
